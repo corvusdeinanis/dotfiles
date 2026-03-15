@@ -282,3 +282,10 @@ ORG-TIMESTAMP should be a string in the format '[YYYY-MM-DD]'."
 
 (use-package org-modern)
 (with-eval-after-load 'org (global-org-modern-mode))
+
+(use-package calfw
+  :ensure t
+  :demand t)
+(use-package calfw-org
+  :ensure t
+  :demand t)
