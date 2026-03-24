@@ -423,7 +423,7 @@
 (with-eval-after-load 'org (global-org-modern-mode))
 
 (use-package org-roam
-  :after org ;- this leads to this block not being evaluated so I commented it. 
+;;  :after org ;- this leads to this block not being evaluated so I commented it. 
   :pin melpa
   :custom
   (org-roam-directory (expand-file-name "~/Documents/notes"))
@@ -433,6 +433,11 @@
                "${slug}.org"
                "#+title: ${title}\n#+created: %(format-time-string \"%Y-%m-%d\")\n#+filetags:\n#+lastmod:\n")
       :unnarrowed t)))
+  :bind (("C-c n l" . org-roam-buffer-toggle)
+         ("C-c n f" . org-roam-node-find)
+         ("C-c n g" . org-roam-graph)
+         ("C-c n i" . org-roam-node-insert)
+         ("C-c n c" . org-roam-capture))
   :config
   (org-roam-db-autosync-mode)
   ;; moved inside the :config so it runs at the right time
@@ -470,9 +475,7 @@
 (global-set-key (kbd "C-c j") 'org-journal-new-entry)
 (global-set-key (kbd "C-c o j") 'org-journal-open-current-journal-file)
 (global-set-key (kbd "C-c l") 'org-goto-calendar)
-(global-set-key (kbd "C-c n") 'org-roam-node-find)
 (global-set-key (kbd "C-z") 'scratch-buffer)
-(global-set-key (kbd "C-c i n") 'org-roam-node-insert) 
 (global-set-key (kbd "C-c o t") #'my/open-todo-master)
 
 		
