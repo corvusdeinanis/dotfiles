@@ -132,7 +132,8 @@
 ;; navigate and select from completion candidates (e.g., when `M-x` is pressed).
 (use-package vertico
   :config
-  (vertico-mode))
+  (vertico-mode)
+  (setq vertico-count 8))
 
 (use-package orderless
   :custom
@@ -397,6 +398,7 @@
   (load-theme 'doom-rouge  t))
 (use-package doom-modeline
   :init (doom-modeline-mode 1))
+ ;; ORG STUFF ;;
 ;; org stuff
 (add-to-list 'warning-suppress-types '(org-element org-element-parser))
 (setq org-hide-emphasis-markers t)
@@ -406,10 +408,19 @@
       org-agenda-start-on-weekday nil
       org-agenda-start-day "-3d")
 
+(setq org-agenda-files '("~/Documents/journal/todo-masterlist.org"))
+
 (setq org-refile-targets
    '((("~/Documents/journal/todo-masterlist.org") :maxlevel . 2)
      (("~/Documents/notes/workspace_archive.org") :maxlevel . 1)))
 
+;; ORG EXPORT STUFF ;; 
+(setq org-export-creator-string "")     
+(setq org-export-with-author nil)       
+(setq org-export-with-tags nil)         
+(setq org-export-with-toc nil)          
+(setq org-export-with-todo-keywords nil)
+(setq org-export-with-broken-links t)
 (use-package org-appear
   :after org
   :custom (add-hook 'org-mode-hook 'org-appear-mode))
@@ -477,7 +488,6 @@
 (global-set-key (kbd "C-c l") 'org-goto-calendar)
 (global-set-key (kbd "C-z") 'scratch-buffer)
 (global-set-key (kbd "C-c o t") #'my/open-todo-master)
-
 		
 (defun my/org-update-lastmod ()
   "Update the last modified timestamp in the current buffer."
