@@ -434,11 +434,10 @@
 (with-eval-after-load 'org (global-org-modern-mode))
 
 (use-package org-roam
-;;  :after org ;- this leads to this block not being evaluated so I commented it. 
-  :pin melpa
+  :ensure t
   :custom
-  (org-roam-directory (expand-file-name "~/Documents/notes"))
-  (org-roam-capture-templates
+  (org-roam-directory (file-truename "~/Documents/notes"))
+   (org-roam-capture-templates
    '(("d" "default" plain "%?"
       :if-new (file+head
                "${slug}.org"
@@ -448,13 +447,14 @@
          ("C-c n f" . org-roam-node-find)
          ("C-c n g" . org-roam-graph)
          ("C-c n i" . org-roam-node-insert)
-         ("C-c n c" . org-roam-capture))
+         ("C-c n c" . org-roam-capture)
+         ;; Dailies
+         ("C-c n j" . org-roam-dailies-capture-today))
   :config
-  (org-roam-db-autosync-mode)
-  ;; moved inside the :config so it runs at the right time
-  (setq org-roam-node-display-template
-        (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag))))
-
+  ;; If you're using a vertical completion framework, you might want a more informative completion interface
+  (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+  (org-roam-db-autosync-mode))
+  
 (use-package org-roam-ui
   :ensure t
   :after org-roam)
