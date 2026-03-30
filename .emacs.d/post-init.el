@@ -504,6 +504,8 @@
             (goto-char (point-max))
             (insert "\n#+lastmod: " time-str)))))))
 
+(add-hook 'before-save-hook #'my/org-update-lastmod)
+
 ;; better face for displaying keybindings in org mode
 (defface my/button-face
   '((t (:inherit icon-button :box (:line-width -1 :style released-button))))
