@@ -1,0 +1,1 @@
+Welcome (?!) to my dotfiles! As of now, it is mostly my ~.emacs.d~ which is a modifed version of [[https://github.com/jamescherti/minimal-emacs.d][James Cherti's minimal-emacs.d]]. 
