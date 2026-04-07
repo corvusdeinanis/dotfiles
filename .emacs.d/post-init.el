@@ -1,12 +1,13 @@
 ;;; post-init.el --- loads AFTER init.el -*- no-byte-compile: t; lexical-binding: t; -*-
 ;; Keep compile-angel at the top!
+(eval-when-compile (require 'use-package))
 (use-package compile-angel
   :demand t
   :config
   ;; The following disables compilation of packages during installation;
   ;; compile-angel will handle it.
   (setq package-native-compile nil)
-
+  
   ;; Set `compile-angel-verbose' to nil to disable compile-angel messages.
   ;; (When set to nil, compile-angel won't show which file is being compiled.)
   (setq compile-angel-verbose t)
@@ -520,3 +521,57 @@
       (2 'my/button-face)
       (3 '(face default invisible t))))))
 (add-hook 'org-mode-hook #'my/org-fontify-hidden-buttons)
+
+(use-package plantuml-mode
+  :config
+    (setq plantuml-default-exec-mode 'jar)
+    (setq plantuml-jar-path "~/plantuml.jar")
+    (setq org-plantuml-jar-path (expand-file-name "~/.emacs.d/plantuml.jar")))
+
+(add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
+(org-babel-do-load-languages 'org-babel-load-languages '((plantuml . t) (python . t)))
+
+(use-package uniline)
+
+(defun org-dblock-write:org-tags-count (params)
+  "Create a table of tags and their counts for the current Org buffer."
+  (let ((tag-counts (make-hash-table :test 'equal)))
+    ;; Collect tag counts
+    (org-map-entries
+     (lambda ()
+       (dolist (tag (org-get-tags))
+         (puthash tag (1+ (gethash tag tag-counts 0)) tag-counts))))
+    ;; Generate Org table
+    (let ((tags (sort (hash-table-keys tag-counts)
+                      (lambda (a b)
+                        (> (gethash a tag-counts) (gethash b tag-counts))))))
+      (insert "| Tag | Count |\n")
+      (insert "|------|-------|\n")
+      (dolist (tag tags)
+        (insert (format "| %s | %d |\n" tag (gethash tag tag-counts)))))))
+
+(defun my/update-org-tags-count-on-save ()
+  "Update the :org-tags-count: dynamic block before saving the Org file."
+  (when (derived-mode-p 'org-mode)
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward "^#\\+BEGIN: org-tags-count" nil t)
+        (org-update-dblock)))))
+;; Org Todos to ical export
+(setq org-icalendar-include-todo t)
+;; for the ability to add screenshots from clipboard 
+(use-package org-download)
+(use-package org-web-tools)
+(use-package org-transclusion)
+(use-package popper
+    :ensure t ; or :straight t
+  :bind (("s-`"   . popper-toggle)
+         ("s-<tab>"   . popper-cycle)
+         ("s-M-`" . popper-toggle-type)))
+
+(setq popper-reference-buffers
+      '("\\*Messages\\*"
+        "Output\\*$"
+        help-mode
+        compilation-mode
+               ))
