@@ -567,11 +567,12 @@
     :ensure t ; or :straight t
   :bind (("s-`"   . popper-toggle)
          ("s-<tab>"   . popper-cycle)
-         ("s-M-`" . popper-toggle-type)))
-
+         ("s-M-`" . popper-toggle-type))
+ :init
 (setq popper-reference-buffers
       '("\\*Messages\\*"
         "Output\\*$"
         help-mode
-        compilation-mode
-               ))
+        compilation-mode))
+(popper-mode +1))
+
