@@ -444,6 +444,9 @@
     ("cd" "deadline college todo" entry
      (file+headline "~/Documents/journal/todo-masterlist.org" "College")
      "** TODO %? \n DEADLINE: %^t")
+    ("ct" "general college todo" entry
+     (file+headline "~/Documents/journal/todo-masterlist.org" "College")
+     "** TODO %?")
     ("t" "General Todo" entry
      (file+headline "~/Documents/journal/todo-masterlist.org" "Unorganized")
      "** TODO %? %^g")
