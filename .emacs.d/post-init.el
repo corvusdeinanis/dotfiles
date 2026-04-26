@@ -399,6 +399,7 @@
   (load-theme 'doom-rouge  t))
 (use-package doom-modeline
   :init (doom-modeline-mode 1))
+
  ;; ORG STUFF ;;
 ;; org stuff
 (add-to-list 'warning-suppress-types '(org-element org-element-parser))
@@ -431,8 +432,24 @@
      ("e" . "src elisp :results none") ("h" . "src html")
      ("l" . "export latex") ("q" . "quote") ("s" . "src")
      ("v" . "verse") ("n" . "note") ("p" . "aside :noexport")))
+
 (use-package org-modern)
 (with-eval-after-load 'org (global-org-modern-mode))
+
+(setq org-capture-templates
+  '(("c" "college related stuff")
+    ("cs" "scheduled college todo" entry
+     (file+headline "~/Documents/journal/todo-masterlist.org" "College")
+     "** TODO %? \n SCHEDULED: %^t")
+    ("cd" "deadline college todo" entry
+     (file+headline "~/Documents/journal/todo-masterlist.org" "College")
+     "** TODO %? \n DEADLINE: %^t")
+    ("t" "General Todo" entry
+     (file+headline "~/Documents/journal/todo-masterlist.org" "Unorganized")
+     "** TODO %? %^g")
+    ("e" "Event" entry
+     (file+headline "~/Documents/journal/todo-masterlist.org" "Events")
+     "** TODO %? %^g\n %^t")))
 
 (use-package org-roam
   :ensure t
@@ -564,7 +581,7 @@
 (use-package org-web-tools)
 (use-package org-transclusion)
 (use-package popper
-    :ensure t ; or :straight t
+    :ensure t  
   :bind (("s-`"   . popper-toggle)
          ("s-<tab>"   . popper-cycle)
          ("s-M-`" . popper-toggle-type))
@@ -573,6 +590,14 @@
       '("\\*Messages\\*"
         "Output\\*$"
         help-mode
-        compilation-mode))
+        compilation-mode
+        "Warning"
+        "Backtrace"
+        ))
 (popper-mode +1))
+
+(use-package org-roam-timeline)
+(use-package wikinfo)
+(use-package wikinforg
+  :load-path "edited/")
 
