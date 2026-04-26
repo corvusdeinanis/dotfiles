@@ -6,19 +6,9 @@
   :config
   ;; The following disables compilation of packages during installation;
   ;; compile-angel will handle it.
-  (setq package-native-compile nil)
-  
+  (setq package-native-compile nil)  
   ;; Set `compile-angel-verbose' to nil to disable compile-angel messages.
-  ;; (When set to nil, compile-angel won't show which file is being compiled.)
   (setq compile-angel-verbose t)
-
-  ;; The following directive prevents compile-angel from compiling your init
-  ;; files. If you choose to remove this push to `compile-angel-excluded-files'
-  ;; and compile your pre/post-init files, ensure you understand the
-  ;; implications and thoroughly test your code. For example, if you're using
-  ;; the `use-package' macro, you'll need to explicitly add:
-  ;; (eval-when-compile (require 'use-package))
-  ;; at the top of your init file.
   (push "/init.el" compile-angel-excluded-files)
   (push "/early-init.el" compile-angel-excluded-files)
   (push "/pre-init.el" compile-angel-excluded-files)
@@ -26,6 +16,7 @@
   (push "/pre-early-init.el" compile-angel-excluded-files)
   (push "/post-early-init.el" compile-angel-excluded-files)
   (compile-angel-on-load-mode 1))
+
 ;; Auto-revert in Emacs is a feature that automatically updates the
 ;; contents of a buffer to reflect changes made to the underlying file
 ;; on disk.
@@ -41,7 +32,7 @@
   (setq auto-revert-use-notify t)
   (setq auto-revert-avoid-polling nil))
 
-;; Recentf is an Emacs package that maintains a list of recently
+;; Recentf maintains a list of recently
 ;; accessed files, making it easier to reopen files you have worked on
 ;; recently.
 (use-package recentf
@@ -66,10 +57,7 @@
   ;; is saved by `recentf-save-list', which is automatically added to
   ;; `kill-emacs-hook' by `recentf-mode'.
   (add-hook 'kill-emacs-hook #'recentf-cleanup -90))
-;; savehist is an Emacs feature that preserves the minibuffer history between
-;; sessions. It saves the history of inputs in the minibuffer, such as commands,
-;; search strings, and other prompts, to a file. This allows users to retain
-;; their minibuffer history across Emacs restarts.
+
 (use-package savehist
   :ensure nil
   :commands (savehist-mode savehist-save)
@@ -89,8 +77,10 @@
   (after-init . save-place-mode)
   :init
   (setq save-place-limit 400))
+
 ;; Enable `auto-save-mode' to prevent data loss. Use `recover-file' or
 ;; `recover-session' to restore unsaved changes.
+
 (setq auto-save-default t)
 
 ;; Trigger an auto-save after 300 keystrokes
@@ -388,6 +378,8 @@
   :custom
   (csv-align-max-width 100)
   (csv-separators '("," ";" " " "|" "\t")))
+
+
 ;; basic adjustments
 (global-visual-line-mode 1)
 (repeat-mode 1)
@@ -400,7 +392,7 @@
 (use-package doom-modeline
   :init (doom-modeline-mode 1))
 
- ;; ORG STUFF ;;
+ ;; ORG STUFF ;; 
 ;; org stuff
 (add-to-list 'warning-suppress-types '(org-element org-element-parser))
 (setq org-hide-emphasis-markers t)
@@ -468,11 +460,8 @@
          ("C-c n f" . org-roam-node-find)
          ("C-c n g" . org-roam-graph)
          ("C-c n i" . org-roam-node-insert)
-         ("C-c n c" . org-roam-capture)
-         ;; Dailies
-         ("C-c n j" . org-roam-dailies-capture-today))
+         ("C-c n c" . org-roam-capture))
   :config
-  ;; If you're using a vertical completion framework, you might want a more informative completion interface
   (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
   (org-roam-db-autosync-mode))
   
@@ -492,6 +481,7 @@
   :ensure t
   :pin melpa  
   :after ox)
+
 ;; My custom functions
 
 (defun my/open-init-file ()
