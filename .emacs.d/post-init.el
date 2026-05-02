@@ -447,7 +447,10 @@
      "** TODO %? %^g\n %^t")
   ("b" "bookmark" entry
    (file+headline "~/Documents/journal/bookmarks.org" "Inbox")
-     "** %? %^g \n :PROPERTIES: \n :CREATED: %t \n:END:")))
+   "** %? %^g \n :PROPERTIES: \n :CREATED: %t \n:END:")
+ ("w" "orgprotocol bookmark" entry
+   (file+headline "~/Documents/journal/bookmarks.org" "Inbox")
+   "** [[%:link][%:description]] %i %? \n:PROPERTIES:\n:CREATED: %t\n:END:")))
 
 (use-package org-roam
   :ensure t
