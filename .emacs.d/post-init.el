@@ -444,7 +444,10 @@
      "** TODO %? %^g")
     ("e" "Event" entry
      (file+headline "~/Documents/journal/todo-masterlist.org" "Events")
-     "** TODO %? %^g\n %^t")))
+     "** TODO %? %^g\n %^t")
+  ("b" "bookmark" entry
+   (file+headline "~/Documents/journal/bookmarks.org" "Inbox")
+     "** %? %^g \n :PROPERTIES: \n :CREATED: %t \n:END:")))
 
 (use-package org-roam
   :ensure t
