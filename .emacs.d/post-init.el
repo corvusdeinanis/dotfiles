@@ -388,10 +388,10 @@
 (use-package doom-themes
   :ensure t
   :config
-  (load-theme 'doom-rouge  t))
+  (load-theme 'doom-laserwave  t))
 (use-package doom-modeline
   :init (doom-modeline-mode 1))
-
+(set-face-attribute 'default nil :height 170) 
  ;; ORG STUFF ;; 
 ;; org stuff
 (add-to-list 'warning-suppress-types '(org-element org-element-parser))
@@ -450,7 +450,7 @@
    "** %? %^g \n :PROPERTIES: \n :CREATED: %t \n:END:")
  ("w" "orgprotocol bookmark" entry
    (file+headline "~/Documents/journal/bookmarks.org" "Inbox")
-   "** [[%:link][%:description]] %i %? \n:PROPERTIES:\n:CREATED: %t\n:END:")))
+   "** [[%:link][%:description]] %i %?\n:PROPERTIES:\n:CREATED: %t\n:END:")))
 
 (use-package org-roam
   :ensure t
@@ -472,7 +472,7 @@
   (org-roam-db-autosync-mode))
   
 (use-package org-roam-ui
-  :ensure t
+  :ensure t                             
   :after org-roam)
 
 (use-package org-journal
@@ -599,4 +599,28 @@
 (use-package wikinfo)
 (use-package wikinforg
   :load-path "edited/")
+
+(require 'org-protocol)
+
+
+(setq safe-local-variable-values
+   '((eval add-hook 'before-save-hook #'my/org-update-lastmod nil 'local)))
+(setq org-hugo-base-dir "~/Documents/github/cuddlyspaceship")
+
+(use-package citar
+  :no-require
+  :custom
+  (org-cite-global-bibliography '("~/Documents/notes/references-meta/My Library.bib"))
+  (org-cite-insert-processor 'citar)
+  (org-cite-follow-processor 'citar)
+  (org-cite-activate-processor 'citar)
+  (citar-bibliography org-cite-global-bibliography)
+(org-cite-export-processors
+ '((md . (csl "~/Documents/notes/references-meta/apa.csl"))   ; Footnote reliant
+   (odt . (csl "~/Documents/notes/references-meta/apa.csl"))  ; Footnote reliant
+   ;(t . (csl "~/Documents/notes/references-meta/apa.csl"))
+   ))      ; Fallback
+  ;; optional: org-cite-insert is also bound to C-c C-x C-@
+  :bind
+  (:map org-mode-map :package org ("C-c b" . #'org-cite-insert)))
 
