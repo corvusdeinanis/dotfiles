@@ -404,10 +404,13 @@
 
 (setq org-agenda-files '("~/Documents/journal/todo-masterlist.org"))
 
+;; to make sure that non-todo items with a scheduled are exported to the ics
+(setq org-icalendar-use-scheduled '(event-if-not-todo todo-start))
+(setq org-icalendar-scheduled-summary-prefix " ")
+
 (setq org-refile-targets
    '((("~/Documents/journal/todo-masterlist.org") :maxlevel . 2)
      (("~/Documents/notes/workspace_archive.org") :maxlevel . 1)))
-
 ;; ORG EXPORT STUFF ;; 
 (setq org-export-creator-string "")     
 (setq org-export-with-author nil)       
@@ -605,6 +608,11 @@
 
 (setq safe-local-variable-values
    '((eval add-hook 'before-save-hook #'my/org-update-lastmod nil 'local)))
+
+(setq safe-local-variable-values
+'((eval add-hook 'after-save-hook (lambda nil (org-icalendar-export-to-ics)) nil t)
+(eval add-hook 'before-save-hook #'my/org-update-lastmod nil 'local)))
+
 (setq org-hugo-base-dir "~/Documents/github/cuddlyspaceship")
 
 (use-package citar
