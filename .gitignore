@@ -16,5 +16,4 @@
 /.emacs.d/recentf
 /.emacs.d/saveplace
 *.elc
-/.emacs.d/session.10d8c6646f000177728802600000022240002
 session.*
