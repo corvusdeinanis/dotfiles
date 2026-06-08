@@ -548,7 +548,7 @@
     (setq org-plantuml-jar-path (expand-file-name "~/.emacs.d/plantuml.jar")))
 
 (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
-(org-babel-do-load-languages 'org-babel-load-languages '((plantuml . t) (python . t)))
+(org-babel-do-load-languages 'org-babel-load-languages '((plantuml . t) (python . t) (mermaid . t)))
 
 (use-package uniline)
 
@@ -632,3 +632,6 @@
   :bind
   (:map org-mode-map :package org ("C-c b" . #'org-cite-insert)))
 
+(defun my-org-confirm-babel-evaluate (lang body)
+  (not (string= lang "plantuml")))  ;don't ask for plantuml 
+(setq org-confirm-babel-evaluate #'my-org-confirm-babel-evaluate)
