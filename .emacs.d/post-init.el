@@ -80,31 +80,26 @@
 
 ;; Enable `auto-save-mode' to prevent data loss. Use `recover-file' or
 ;; `recover-session' to restore unsaved changes.
-
 (setq auto-save-default t)
-
 ;; Trigger an auto-save after 300 keystrokes
 (setq auto-save-interval 300)
-
 ;; Trigger an auto-save 30 seconds of idle time.
 (setq auto-save-timeout 30)
+
 ;; Corfu enhances in-buffer completion by displaying a compact popup with
 ;; current candidates, positioned either below or above the point. Candidates
 ;; can be selected by navigating up or down.
 (use-package corfu
   :commands (corfu-mode global-corfu-mode)
-
   :hook ((prog-mode . corfu-mode)
          (shell-mode . corfu-mode)
          (eshell-mode . corfu-mode))
-
   :custom
   ;; Hide commands in M-x which do not apply to the current mode.
   (read-extended-command-predicate #'command-completion-default-include-p)
   ;; Disable Ispell completion function. As an alternative try `cape-dict'.
   (text-mode-ispell-word-completion nil)
   (tab-always-indent 'complete)
-
   ;; Enable Corfu
   :config
   (global-corfu-mode))
@@ -231,9 +226,8 @@
              undo-fu-only-redo-all
              undo-fu-disable-checkpoint)
   :config
-  (global-unset-key (kbd "C-z"))
-  (global-set-key (kbd "C-z") 'undo-fu-only-undo)
-  (global-set-key (kbd "C-S-z") 'undo-fu-only-redo))
+  (global-set-key (kbd "C-/") 'undo-fu-only-undo)
+  (global-set-key (kbd "C-S-/") 'undo-fu-only-redo))
 
 ;; The undo-fu-session package complements undo-fu by enabling the saving
 ;; and restoration of undo history across Emacs sessions, even after restarting.
@@ -332,11 +326,7 @@
         treemacs-width-increment                 1
         treemacs-width-is-initially-locked       t
         treemacs-workspace-switch-cleanup        nil)
-
-  ;; The default width and height of the icons is 22 pixels. If you are
-  ;; using a Hi-DPI display, uncomment this to double the icon size.
-  ;; (treemacs-resize-icons 44)
-
+  
   (treemacs-follow-mode t)
   (treemacs-filewatch-mode t)
   (treemacs-fringe-indicator-mode 'always)
@@ -354,7 +344,10 @@
 (defvar my/journal-dir "~/Documents/journal" "Directory for my journals.")
 (defvar my/roam-dir "~/Documents/notes" "Directory for my org-roam notes")
 (defvar my/bookmarks-file "~/Documents/journal/bookmarks.org" "Bookmarks File")
-
+(setq org-hugo-base-dir "~/Documents/github/cuddlyspaceship")
+(setq org-refile-targets
+   '((("~/Documents/journal/todo-masterlist.org") :maxlevel . 2)
+     (("~/Documents/notes/workspace_archive.org") :maxlevel . 1)))
 ;; Display the current line and column numbers in the mode line
 (setq line-number-mode t)
 (setq column-number-mode t)
@@ -379,7 +372,6 @@
   (csv-align-max-width 100)
   (csv-separators '("," ";" " " "|" "\t")))
 
-
 ;; basic adjustments
 (global-visual-line-mode 1)
 (repeat-mode 1)
@@ -392,7 +384,8 @@
 (use-package doom-modeline
   :init (doom-modeline-mode 1))
 (set-face-attribute 'default nil :height 170) 
- ;; ORG STUFF ;; 
+
+;; ORG STUFF ;; 
 ;; org stuff
 (add-to-list 'warning-suppress-types '(org-element org-element-parser))
 (setq org-hide-emphasis-markers t)
@@ -407,10 +400,9 @@
 ;; to make sure that non-todo items with a scheduled are exported to the ics
 (setq org-icalendar-use-scheduled '(event-if-not-todo todo-start))
 (setq org-icalendar-scheduled-summary-prefix " ")
+;; Org Todos to ical export
+(setq org-icalendar-include-todo t)
 
-(setq org-refile-targets
-   '((("~/Documents/journal/todo-masterlist.org") :maxlevel . 2)
-     (("~/Documents/notes/workspace_archive.org") :maxlevel . 1)))
 ;; ORG EXPORT STUFF ;; 
 (setq org-export-creator-string "")     
 (setq org-export-with-author nil)       
@@ -492,7 +484,6 @@
   :after ox)
 
 ;; My custom functions
-
 (defun my/open-init-file ()
   "open the init file." (interactive)
   (find-file (expand-file-name "post-init.el" user-emacs-directory))) ;; find your init file
@@ -502,13 +493,6 @@
   "Open the master todo file from journal" (interactive)
   (find-file (expand-file-name "todo-masterlist.org" my/journal-dir)))
 
-(global-set-key (kbd "C-c c") 'org-capture)
-(global-set-key (kbd "C-c j") 'org-journal-new-entry)
-(global-set-key (kbd "C-c o j") 'org-journal-open-current-journal-file)
-(global-set-key (kbd "C-c l") 'org-goto-calendar)
-(global-set-key (kbd "C-z") 'scratch-buffer)
-(global-set-key (kbd "C-c o t") #'my/open-todo-master)
-		
 (defun my/org-update-lastmod ()
   "Update the last modified timestamp in the current buffer."
   (interactive)
@@ -523,6 +507,15 @@
           (progn
             (goto-char (point-max))
             (insert "\n#+lastmod: " time-str)))))))
+
+;; keybindings
+(global-set-key (kbd "C-c c") 'org-capture)
+(global-set-key (kbd "C-c j") 'org-journal-new-entry)
+(global-set-key (kbd "C-c o j") 'org-journal-open-current-journal-file)
+(global-set-key (kbd "C-c l") 'org-goto-calendar)
+(global-set-key (kbd "C-z") 'scratch-buffer)
+(global-set-key (kbd "C-c o t") #'my/open-todo-master)
+		
 ;; better face for displaying keybindings in org mode
 (defface my/button-face
   '((t (:inherit icon-button :box (:line-width -1 :style released-button))))
@@ -573,8 +566,6 @@
       (goto-char (point-min))
       (while (re-search-forward "^#\\+BEGIN: org-tags-count" nil t)
         (org-update-dblock)))))
-;; Org Todos to ical export
-(setq org-icalendar-include-todo t)
 ;; for the ability to add screenshots from clipboard 
 (use-package org-download)
 (setq org-download-image-dir "images")
@@ -603,14 +594,11 @@
 
 (require 'org-protocol)
 
-
 (add-to-list 'safe-local-variable-values
              '(eval . (progn
                         (add-hook 'before-save-hook #'my/org-update-lastmod nil 'local)
                         (org-hugo-auto-export-mode)
                         (add-hook 'after-save-hook (lambda () (org-icalendar-export-to-ics)) nil t))))
-
-(setq org-hugo-base-dir "~/Documents/github/cuddlyspaceship")
 
 (use-package citar
   :no-require
