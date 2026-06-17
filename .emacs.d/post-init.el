@@ -580,6 +580,7 @@
 (setq org-icalendar-include-todo t)
 ;; for the ability to add screenshots from clipboard 
 (use-package org-download)
+(setq org-download-image-dir "images")
 (use-package org-web-tools)
 (use-package org-transclusion)
 (use-package popper
@@ -635,3 +636,11 @@
 (defun my-org-confirm-babel-evaluate (lang body)
   (not (string= lang "plantuml")))  ;don't ask for plantuml 
 (setq org-confirm-babel-evaluate #'my-org-confirm-babel-evaluate)
+
+(use-package ob-mermaid
+  :defer t)
+
+(use-package org-mindmap
+  :vc (:url "https://github.com/krvkir/org-mindmap.git" :rev :newest)
+  :after org
+  :config)
