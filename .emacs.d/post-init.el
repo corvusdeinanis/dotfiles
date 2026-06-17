@@ -594,11 +594,20 @@
 
 (require 'org-protocol)
 
-(add-to-list 'safe-local-variable-values
-             '(eval . (progn
-                        (add-hook 'before-save-hook #'my/org-update-lastmod nil 'local)
-                        (org-hugo-auto-export-mode)
-                        (add-hook 'after-save-hook (lambda () (org-icalendar-export-to-ics)) nil t))))
+(add-to-list
+ 'safe-local-variable-values
+ '(eval progn
+        (add-hook 'before-save-hook #'my/org-update-lastmod nil 'local)
+        (org-hugo-auto-export-mode)))
+
+(add-to-list
+ 'safe-local-variable-values
+ '(eval progn
+        (add-hook 'before-save-hook #'my/org-update-lastmod nil 'local)
+        (org-hugo-auto-export-mode)
+        (add-hook 'after-save-hook
+                  (lambda nil (org-icalendar-export-to-ics))
+                  nil t)))
 
 (use-package citar
   :no-require
