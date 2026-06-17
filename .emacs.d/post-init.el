@@ -523,9 +523,6 @@
           (progn
             (goto-char (point-max))
             (insert "\n#+lastmod: " time-str)))))))
-
-(add-hook 'before-save-hook #'my/org-update-lastmod)
-
 ;; better face for displaying keybindings in org mode
 (defface my/button-face
   '((t (:inherit icon-button :box (:line-width -1 :style released-button))))
@@ -607,12 +604,11 @@
 (require 'org-protocol)
 
 
-(setq safe-local-variable-values
-   '((eval add-hook 'before-save-hook #'my/org-update-lastmod nil 'local)))
-
-(setq safe-local-variable-values
-'((eval add-hook 'after-save-hook (lambda nil (org-icalendar-export-to-ics)) nil t)
-(eval add-hook 'before-save-hook #'my/org-update-lastmod nil 'local)))
+(add-to-list 'safe-local-variable-values
+             '(eval . (progn
+                        (add-hook 'before-save-hook #'my/org-update-lastmod nil 'local)
+                        (org-hugo-auto-export-mode)
+                        (add-hook 'after-save-hook (lambda () (org-icalendar-export-to-ics)) nil t))))
 
 (setq org-hugo-base-dir "~/Documents/github/cuddlyspaceship")
 
