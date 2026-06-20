@@ -28,7 +28,15 @@ alias ,soup-build-serve="soupault && python3 -m http.server -d build/"
 alias ,wcsort='find . -name "*.org" -print0 | wc -w --files0-from=- | sort -n'
 alias ,serve="python3 -m http.server"
 alias open="xdg-open"
-
+alias ,edit-bash="emacsclient ~/.bashrc"
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+eval "$(mcfly init bash)" #McFly, the shell history thingy
+eval "$(zoxide init bash)"
+
+ if [ -z "$SSH_AUTH_SOCK" ] ; then
+    eval `ssh-agent -s`
+    ssh-add ~/.ssh/id_ed25519
+ fi
