@@ -476,19 +476,19 @@
   (org-journal-dir (expand-file-name my/journal-dir))
   (org-journal-file-type 'monthly)
   (org-journal-file-format "%Y-%m-%b.org")
-  (org-journal-date-format "%A, %d %B %Y")
-  (org-journal-carryover-items "")
-  :config
-  (require 'org-id)
-  (defun my/org-journal-add-file-id ()
-    (when (and buffer-file-name
-               (string-match-p org-journal-file-format (file-name-nondirectory buffer-file-name)))
-      (save-excursion
-        (goto-char (point-min))
-        (unless (re-search-forward "^:ID:" nil t)
-          (goto-char (point-min))
-          (insert ":PROPERTIES:\n:ID: " (org-id-new) "\n:END:\n\n")))))
-  (add-hook 'org-journal-mode-hook #'my/org-journal-add-file-id))
+  (org-journal-date-format "%A, %d %B %Y"))
+
+(setq org-journal-file-header
+      (lambda (time)
+        (concat
+         ":PROPERTIES:\n"
+         ":ID: " (format-time-string "month-%Y-%m" time) "\n"
+         ":END:\n"
+         "#+TITLE: " (format-time-string "%B %Y" time) "\n"
+         "#+STARTUP: folded\n"
+         "#+filetags: :private:\n"
+         "#+lastmod:\n")))
+
 
 (use-package ox-hugo ; code snippet from https://ox-hugo.scripter.co/doc/installation/
   :ensure t
