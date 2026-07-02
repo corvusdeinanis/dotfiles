@@ -341,13 +341,13 @@
   (treemacs-hide-gitignored-files-mode nil))
 
 ;; Filepaths
-(defvar my/journal-dir "~/Documents/journal" "Directory for my journals.")
-(defvar my/roam-dir "~/Documents/notes" "Directory for my org-roam notes")
-(defvar my/bookmarks-file "~/Documents/journal/bookmarks.org" "Bookmarks File")
+(defvar my/journal-dir "~/org/journal" "Directory for my journals.")
+(defvar my/roam-dir "~/org" "Directory for my org-roam notes")
+(defvar my/bookmarks-file "~/org/bookmarks.org" "Bookmarks File")
 (setq org-hugo-base-dir "~/Documents/github/cuddlyspaceship")
 (setq org-refile-targets
-   '((("~/Documents/journal/todo-masterlist.org") :maxlevel . 2)
-     (("~/Documents/notes/workspace_archive.org") :maxlevel . 1)))
+   '((("~/org/journal/todo-masterlist.org") :maxlevel . 2)
+     (("~/org/workspace_archive.org") :maxlevel . 1)))
 ;; Display the current line and column numbers in the mode line
 (setq line-number-mode t)
 (setq column-number-mode t)
@@ -395,7 +395,7 @@
       org-agenda-start-on-weekday nil
       org-agenda-start-day "-3d")
 
-(setq org-agenda-files '("~/Documents/journal/todo-masterlist.org"))
+(setq org-agenda-files '("~/org/journal/todo-masterlist.org"))
 
 ;; to make sure that non-todo items with a scheduled are exported to the ics
 (setq org-icalendar-use-scheduled '(event-if-not-todo todo-start))
@@ -426,31 +426,31 @@
 (setq org-capture-templates
   '(("c" "college related stuff")
     ("cs" "scheduled college todo" entry
-     (file+headline "~/Documents/journal/todo-masterlist.org" "College")
+     (file+headline "~/org/journal/todo-masterlist.org" "College")
      "** TODO %? \n SCHEDULED: %^t")
     ("cd" "deadline college todo" entry
-     (file+headline "~/Documents/journal/todo-masterlist.org" "College")
+     (file+headline "~/org/journal/todo-masterlist.org" "College")
      "** TODO %? \n DEADLINE: %^t")
     ("ct" "general college todo" entry
-     (file+headline "~/Documents/journal/todo-masterlist.org" "College")
+     (file+headline "~/org/journal/todo-masterlist.org" "College")
      "** TODO %?")
     ("t" "General Todo" entry
-     (file+headline "~/Documents/journal/todo-masterlist.org" "Unorganized")
+     (file+headline "~/org/journal/todo-masterlist.org" "Unorganized")
      "** TODO %? %^g")
     ("e" "Event" entry
-     (file+headline "~/Documents/journal/todo-masterlist.org" "Events")
+     (file+headline "~/org/journal/todo-masterlist.org" "Events")
      "** TODO %? %^g\n %^t")
   ("b" "bookmark" entry
-   (file+headline "~/Documents/journal/bookmarks.org" "Inbox")
+   (file+headline "~/org/journal/bookmarks.org" "Inbox")
    "** %? %^g \n :PROPERTIES: \n :CREATED: %t \n:END:")
  ("w" "orgprotocol bookmark" entry
-   (file+headline "~/Documents/journal/bookmarks.org" "Inbox")
+   (file+headline "~/org/journal/bookmarks.org" "Inbox")
    "** [[%:link][%:description]] %i %?\n:PROPERTIES:\n:CREATED: %t\n:END:")))
 
 (use-package org-roam
   :ensure t
   :custom
-  (org-roam-directory (file-truename "~/Documents/notes"))
+  (org-roam-directory (file-truename "~/org"))
    (org-roam-capture-templates
    '(("d" "default" plain "%?"
       :if-new (file+head
@@ -476,7 +476,19 @@
   (org-journal-dir (expand-file-name my/journal-dir))
   (org-journal-file-type 'monthly)
   (org-journal-file-format "%Y-%m-%b.org")
-  (org-journal-date-format "%A, %d %B %Y"))
+  (org-journal-date-format "%A, %d %B %Y")
+  (org-journal-carryover-items "")
+  :config
+  (require 'org-id)
+  (defun my/org-journal-add-file-id ()
+    (when (and buffer-file-name
+               (string-match-p org-journal-file-format (file-name-nondirectory buffer-file-name)))
+      (save-excursion
+        (goto-char (point-min))
+        (unless (re-search-forward "^:ID:" nil t)
+          (goto-char (point-min))
+          (insert ":PROPERTIES:\n:ID: " (org-id-new) "\n:END:\n\n")))))
+  (add-hook 'org-journal-mode-hook #'my/org-journal-add-file-id))
 
 (use-package ox-hugo ; code snippet from https://ox-hugo.scripter.co/doc/installation/
   :ensure t
@@ -488,6 +500,13 @@
   "open the init file." (interactive)
   (find-file (expand-file-name "post-init.el" user-emacs-directory))) ;; find your init file
 (global-set-key (kbd "C-c o i") #'my/open-init-file)
+
+(defun open-org-roam-directory-in-dired ()
+  "Open the org-roam-directory in Dired."
+  (interactive)
+  (let ((dir (or org-roam-directory default-directory)))
+    (dired dir)))
+(global-set-key (kbd "C-c o n") 'open-org-roam-directory-in-dired)
 
 (defun my/open-todo-master ()
   "Open the master todo file from journal" (interactive)
