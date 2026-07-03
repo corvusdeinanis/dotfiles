@@ -484,10 +484,10 @@
          ":PROPERTIES:\n"
          ":ID: " (format-time-string "month-%Y-%m" time) "\n"
          ":END:\n"
-         "#+TITLE: " (format-time-string "%B %Y" time) "\n"
-         "#+STARTUP: folded\n"
+         "#+title: " (format-time-string "%B %Y" time) "\n"
+         "#+startup: folded\n"
          "#+filetags: :private:\n"
-         "#+lastmod:\n")))
+         "#+lastmod:\n\n")))
 
 
 (use-package ox-hugo ; code snippet from https://ox-hugo.scripter.co/doc/installation/
@@ -521,7 +521,7 @@
       (let ((time-str (format-time-string "%Y-%m-%d %H:%M:%S")))
         (if (re-search-forward "^#\\+lastmod:" nil t)
             (progn
-              (kill-line)
+             ; (kill-line)
               (insert " " time-str))
           (progn
             (goto-char (point-max))
