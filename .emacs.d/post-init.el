@@ -519,13 +519,11 @@
     (save-excursion
       (goto-char (point-min))
       (let ((time-str (format-time-string "%Y-%m-%d %H:%M:%S")))
-        (if (re-search-forward "^#\\+lastmod:" nil t)
-            (progn
-             ; (kill-line)
-              (insert " " time-str))
-          (progn
-            (goto-char (point-max))
-            (insert "\n#+lastmod: " time-str)))))))
+        (if (re-search-forward "^#\\+lastmod:.*$" nil t)
+            (replace-match (concat "#+lastmod: " time-str) t t)
+          (goto-char (point-max))
+          (unless (bolp) (insert "\n"))
+          (insert "#+lastmod: " time-str "\n"))))))
 
 ;; keybindings
 (global-set-key (kbd "C-c c") 'org-capture)
