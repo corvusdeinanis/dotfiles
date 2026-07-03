@@ -476,7 +476,8 @@
   (org-journal-dir (expand-file-name my/journal-dir))
   (org-journal-file-type 'monthly)
   (org-journal-file-format "%Y-%m-%b.org")
-  (org-journal-date-format "%A, %d %B %Y"))
+  (org-journal-date-format "%A, %d %B %Y")
+  (org-journal-carryover-items ""))
 
 (setq org-journal-file-header
       (lambda (time)
