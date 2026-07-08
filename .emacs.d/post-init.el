@@ -344,7 +344,6 @@
 (defvar my/journal-dir "~/org/journal" "Directory for my journals.")
 (defvar my/roam-dir "~/org" "Directory for my org-roam notes")
 (defvar my/bookmarks-file "~/org/bookmarks.org" "Bookmarks File")
-(setq org-hugo-base-dir "~/Documents/github/cuddlyspaceship")
 (setq org-refile-targets
    '((("~/org/journal/todo-masterlist.org") :maxlevel . 2)
      (("~/org/workspace_archive.org") :maxlevel . 1)))
@@ -615,8 +614,7 @@
 (add-to-list
  'safe-local-variable-values
  '(eval progn
-        (add-hook 'before-save-hook #'my/org-update-lastmod nil 'local)
-        (org-hugo-auto-export-mode)))
+        (add-hook 'before-save-hook #'my/org-update-lastmod nil 'local)))
 
 (add-to-list
  'safe-local-variable-values
