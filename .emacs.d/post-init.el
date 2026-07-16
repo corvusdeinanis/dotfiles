@@ -647,5 +647,33 @@
 
 (use-package org-mindmap
   :vc (:url "https://github.com/krvkir/org-mindmap.git" :rev :newest)
-  :after org
-  :config)
+  :after org)
+
+;; Custom font face for admonitions!
+(defface my-org-aside-face
+  '((t :foreground "SkyBlue1" :weight bold))
+  "")
+(defface my-org-warning-face
+  '((t :foreground "orange red" :weight bold))
+  "")
+(defface my-org-note-face
+  '((t :foreground "DeepSkyBlue" :weight bold))
+  "")
+
+(defun my-org-admonition-matcher (limit)
+  (when (re-search-forward "^#\\+begin_\\(aside\\|warning\\|note\\)\\b.*$" limit t)
+    (let* ((type (match-string 1))
+           (face (pcase type
+                   ("aside" 'my-org-aside-face)
+                   ("warning" 'my-org-warning-face)
+                   ("note" 'my-org-note-face)))
+           (label (capitalize type)))
+      (put-text-property (match-beginning 0) (match-end 0)
+                         'display
+                         (propertize label 'face face))
+      t)))
+
+(defun my-org-enable-admonitions ()
+  (font-lock-add-keywords nil '((my-org-admonition-matcher)) t)
+  (font-lock-flush))
+(add-hook 'org-mode-hook #'my-org-enable-admonitions)
