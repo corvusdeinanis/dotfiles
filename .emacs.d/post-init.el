@@ -677,3 +677,22 @@
   (font-lock-add-keywords nil '((my-org-admonition-matcher)) t)
   (font-lock-flush))
 (add-hook 'org-mode-hook #'my-org-enable-admonitions)
+
+(defun my-strip-org-id-links-in-file (file)
+  (with-temp-buffer
+    (insert-file-contents file)
+    (goto-char (point-min))
+    (while (re-search-forward "\\[\\[id:[^]]+\\]\\[\\([^]]+\\)\\]\\]" nil t)
+      (replace-match "\\1" t))
+    (write-region (point-min) (point-max) file)))
+
+(defun my-sync-blog-posts ()
+  (interactive)
+  (let ((src (file-name-as-directory (expand-file-name "~/org/blog/")))
+        (dst (file-name-as-directory (expand-file-name "~/projects/emacs-lisp-blog/src/posts/"))))
+    (make-directory dst t)
+    (call-process "rsync" nil "*rsync-sync*" t
+                  "-a" "--delete" src dst)
+    (dolist (file (directory-files-recursively dst "\\.org\\'"))
+      (my-strip-org-id-links-in-file file))
+    (message "Synced and stripped id links.")))
