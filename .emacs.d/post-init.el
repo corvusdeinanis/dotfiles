@@ -414,10 +414,10 @@
   :custom (add-hook 'org-mode-hook 'org-appear-mode))
 
 (setq org-structure-template-alist
-   '(("a" . "aside") ("c" . "center") ("C" . "comment")
-     ("e" . "src elisp :results none") ("h" . "src html")
+   '(("a" . "aside") 
+     ("se" . "src elisp :results none") ("sh" . "src html")
      ("l" . "export latex") ("q" . "quote") ("s" . "src")
-     ("v" . "verse") ("n" . "note") ("p" . "aside :noexport")))
+     ("n" . "note") ("pa" . "aside :noexport") ("w" . "warning")))
 
 (use-package org-modern)
 (with-eval-after-load 'org (global-org-modern-mode))
@@ -689,10 +689,56 @@
 (defun my-sync-blog-posts ()
   (interactive)
   (let ((src (file-name-as-directory (expand-file-name "~/org/blog/")))
-        (dst (file-name-as-directory (expand-file-name "~/projects/emacs-lisp-blog/src/posts/"))))
+        (dst (file-name-as-directory (expand-file-name "~/projects/blog/src/posts/"))))
     (make-directory dst t)
     (call-process "rsync" nil "*rsync-sync*" t
                   "-a" "--delete" src dst)
     (dolist (file (directory-files-recursively dst "\\.org\\'"))
       (my-strip-org-id-links-in-file file))
     (message "Synced and stripped id links.")))
+;; Org GTD
+(use-package org-gtd
+  :ensure t
+  :after org
+  :demand t
+  :init
+  ;; Suppress upgrade warnings (must be set before package loads)
+  (setq org-gtd-update-ack "4.0.0")
+  ;; Where org-gtd will keep its files (defaults to ~/gtd/)
+  ;; (setq org-gtd-directory "~/my-gtd/")
+
+  :custom
+  ;; Configure TODO keyword states (options like "TODO(t)" or "DONE(d!)" are fine)
+  (org-todo-keywords '((sequence "TODO" "NEXT" "WAIT" "|" "DONE" "CNCL")))
+
+  ;; Map GTD semantic states to your keywords
+  (org-gtd-keyword-mapping '((todo . "TODO")
+                             (next . "NEXT")
+                             (wait . "WAIT")
+                             (cancelled . "CNCL")))
+
+  :config
+  ;; REQUIRED: Enable org-edna for project dependencies
+  (org-edna-mode 1)
+
+  ;; Add org-gtd files to your agenda (must be in :config so org-gtd-directory is defined).
+  ;; A directory entry is valid: org-mode scans every .org file inside it.
+  ;; Already using org-agenda-files? Don't overwrite it - merge instead, e.g.:
+    (add-to-list 'org-agenda-files org-gtd-directory)
+ ;; (setq org-agenda-files (list org-gtd-directory))
+
+  :bind
+  ;; Global keybindings (work anywhere in Emacs)
+  (("C-c d c" . org-gtd-capture)
+   ("C-c d e" . org-gtd-engage)
+   ("C-c d p" . org-gtd-process-inbox)
+   ("C-c d n" . org-gtd-show-all-next)
+   ("C-c d s" . org-gtd-reflect-stuck-projects)
+
+   ;; Keybinding for organizing items (only works in clarify buffers)
+   :map org-gtd-clarify-mode-map
+   ("C-c c" . org-gtd-organize)
+
+   ;; Quick actions on tasks in agenda views (optional but recommended)
+   :map org-agenda-mode-map
+   ("C-c ." . org-gtd-agenda-transient)))
