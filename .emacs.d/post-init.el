@@ -464,7 +464,8 @@
   :config
   (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
   (org-roam-db-autosync-mode))
-  
+(setq org-roam-file-exclude-regexp '("data/" ".stfolder/" "archive/" "auto-save-list/" ".backup/" "harp-profile-harp-org.org"))  
+
 (use-package org-roam-ui
   :ensure t                             
   :after org-roam)
