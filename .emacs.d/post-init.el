@@ -425,22 +425,22 @@
 (setq org-capture-templates
   '(("c" "college related stuff")
     ("cs" "scheduled college todo" entry
-     (file+headline "~/org/journal/todo-masterlist.org" "College")
-     "** TODO %? \n SCHEDULED: %^t")
+     (file "~/org/journal/todo-masterlist.org")
+     "** TODO %? :college: \n SCHEDULED: %^t")
     ("cd" "deadline college todo" entry
-     (file+headline "~/org/journal/todo-masterlist.org" "College")
-     "** TODO %? \n DEADLINE: %^t")
+     (file "~/org/journal/todo-masterlist.org")
+     "** TODO %? :college: \n DEADLINE: %^t")
     ("ct" "general college todo" entry
-     (file+headline "~/org/journal/todo-masterlist.org" "College")
-     "** TODO %?")
+     (file "~/org/journal/todo-masterlist.org")
+     "** TODO %? :college:")
     ("t" "General Todo" entry
-     (file+headline "~/org/journal/todo-masterlist.org" "Unorganized")
+     (file "~/org/journal/todo-masterlist.org")
      "** TODO %? %^g")
     ("e" "Event" entry
-     (file+headline "~/org/journal/todo-masterlist.org" "Events")
+     (file "~/org/journal/todo-masterlist.org" "Events")
      "** TODO %? %^g\n %^t")
   ("b" "bookmark" entry
-   (file+headline "~/org/journal/bookmarks.org" "Inbox")
+   (file "~/org/journal/bookmarks.org" "Inbox")
    "** %? %^g \n :PROPERTIES: \n :CREATED: %t \n:END:")
  ("w" "orgprotocol bookmark" entry
    (file+headline "~/org/journal/bookmarks.org" "Inbox")
@@ -465,6 +465,15 @@
   (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
   (org-roam-db-autosync-mode))
 (setq org-roam-file-exclude-regexp '("data/" ".stfolder/" "archive/" "auto-save-list/" ".backup/" "harp-profile-harp-org.org"))  
+
+(defun my-find-org-roam-orphans ()
+(interactive)
+(let* ((org-roam--db (sqlite-open org-roam-db-location))
+       (org-roam-orphans (sqlite-select org-roam--db 
+         "select * from nodes n where not exists (select null from links l where n.id = l.source) and not exists (select null from links l where n.id = l.dest);")))
+  (sqlite-close org-roam--db)
+  (find-file (completing-read "Orphan node: " 
+             (mapcar (lambda (rec) (string-replace "\"" "" (cadr rec))) org-roam-orphans)))))
 
 (use-package org-roam-ui
   :ensure t                             
