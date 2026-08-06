@@ -396,8 +396,9 @@
 
 (setq org-agenda-files '("~/org/journal/todo-masterlist.org"))
 
-;; to make sure that non-todo items with a scheduled are exported to the ics
+;; to make sure that non-todo items with a scheduled/deadline are exported to the ics!!
 (setq org-icalendar-use-scheduled '(event-if-not-todo todo-start))
+(setq org-icalendar-use-deadline '(event-if-not-todo event-if-todo todo-due))
 (setq org-icalendar-scheduled-summary-prefix " ")
 ;; Org Todos to ical export
 (setq org-icalendar-include-todo t)
@@ -464,7 +465,7 @@
   :config
   (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
   (org-roam-db-autosync-mode))
-(setq org-roam-file-exclude-regexp '("data/" ".stfolder/" "archive/" "auto-save-list/" ".backup/" "harp-profile-harp-org.org"))  
+(setq org-roam-file-exclude-regexp '("data/" ".stfolder/" "archive/" "auto-save-list/" ".backup/" "harp-profile-harp-org.org" ".stversions"))  
 
 (defun my-find-org-roam-orphans ()
 (interactive)
