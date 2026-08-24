@@ -632,23 +632,6 @@
  '(eval add-hook 'after-save-hook (lambda nil (org-icalendar-export-to-ics)) nil
            t))
 
-(use-package citar
-  :no-require
-  :custom
-  (org-cite-global-bibliography '("~/Documents/notes/references-meta/My Library.bib"))
-  (org-cite-insert-processor 'citar)
-  (org-cite-follow-processor 'citar)
-  (org-cite-activate-processor 'citar)
-  (citar-bibliography org-cite-global-bibliography)
-(org-cite-export-processors
- '((md . (csl "~/Documents/notes/references-meta/apa.csl"))   ; Footnote reliant
-   (odt . (csl "~/Documents/notes/references-meta/apa.csl"))  ; Footnote reliant
-   ;(t . (csl "~/Documents/notes/references-meta/apa.csl"))
-   ))      ; Fallback
-  ;; optional: org-cite-insert is also bound to C-c C-x C-@
-  :bind
-  (:map org-mode-map :package org ("C-c b" . #'org-cite-insert)))
-
 (defun my-org-confirm-babel-evaluate (lang body)
   (not (string= lang "plantuml")))  ;don't ask for plantuml 
 (setq org-confirm-babel-evaluate #'my-org-confirm-babel-evaluate)
@@ -660,16 +643,13 @@
   :vc (:url "https://github.com/krvkir/org-mindmap.git" :rev :newest)
   :after org)
 
-;; Custom font face for admonitions!
+;; Custom font face for admonitions!!!
 (defface my-org-aside-face
-  '((t :foreground "SkyBlue1" :weight bold))
-  "")
+  '((t :foreground "SkyBlue1" :weight bold))  "")
 (defface my-org-warning-face
-  '((t :foreground "orange red" :weight bold))
-  "")
+  '((t :foreground "orange red" :weight bold))  "")
 (defface my-org-note-face
-  '((t :foreground "DeepSkyBlue" :weight bold))
-  "")
+  '((t :foreground "DeepSkyBlue" :weight bold))  "")
 
 (defun my-org-admonition-matcher (limit)
   (when (re-search-forward "^#\\+begin_\\(aside\\|warning\\|note\\)\\b.*$" limit t)
@@ -696,7 +676,7 @@
     (while (re-search-forward "\\[\\[id:[^]]+\\]\\[\\([^]]+\\)\\]\\]" nil t)
       (replace-match "\\1" t))
     (write-region (point-min) (point-max) file)))
-
+;; below code is AI-generated :( 
 (defun my-sync-blog-posts ()
   (interactive)
   (let ((src (file-name-as-directory (expand-file-name "~/org/blog/")))
@@ -707,3 +687,30 @@
     (dolist (file (directory-files-recursively dst "\\.org\\'"))
       (my-strip-org-id-links-in-file file))
     (message "Synced and stripped id links.")))
+
+(with-eval-after-load 'ox-latex
+  (add-to-list 'org-latex-classes
+               '("apa7" 
+                 "\\documentclass[stu,12pt]{apa7}" 
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+
+(use-package citar
+  :no-require
+  :custom
+  (org-cite-global-bibliography '("~/org/extra/references-meta/My Library.bib"))
+  (org-cite-insert-processor 'citar)
+  (org-cite-follow-processor 'citar)
+  (org-cite-activate-processor 'citar)
+  (citar-bibliography org-cite-global-bibliography)
+  (org-cite-export-processors
+   '((md . (csl "~/org/extra/references-meta/apa.csl"))   
+     (odt . (csl "~/org/extra/references-meta/apa.csl"))  
+     (latex . (csl "~/org/extra/references-meta/apa.csl"))
+     (t . (csl "~/org/extra/references-meta/apa.csl"))))      
+  :bind
+  (:map org-mode-map :package org ("C-c b" . #'org-cite-insert)))
+(setq org-latex-pdf-process '("tectonic %f"))
