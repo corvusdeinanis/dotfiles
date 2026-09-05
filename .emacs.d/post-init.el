@@ -346,11 +346,12 @@
 (defvar my/bookmarks-file "~/org/bookmarks.org" "Bookmarks File")
 (setq org-refile-targets
    '((("~/org/journal/todo-masterlist.org") :maxlevel . 2)
-     (("~/org/workspace_archive.org") :maxlevel . 1)))
+     (("~/org/archive/workspace_archive.org") :maxlevel . 1)))
 ;; Display the current line and column numbers in the mode line
 (setq line-number-mode t)
 (setq column-number-mode t)
 (setq mode-line-position-column-line-format '("%l:%C"))
+
 (require 'org-tempo)
 
 (use-package calfw
@@ -701,7 +702,7 @@
 (use-package citar
   :no-require
   :custom
-  (org-cite-global-bibliography '("~/org/extra/references-meta/My Library.bib"))
+  (org-cite-global-bibliography '("~/org/My Library.bib"))
   (org-cite-insert-processor 'citar)
   (org-cite-follow-processor 'citar)
   (org-cite-activate-processor 'citar)
