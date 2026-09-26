@@ -715,3 +715,11 @@
   :bind
   (:map org-mode-map :package org ("C-c b" . #'org-cite-insert)))
 (setq org-latex-pdf-process '("tectonic %f"))
+
+(use-package phscroll
+  :vc (:url "https://github.com/misohena/phscroll")
+  :after org
+  :init
+  (setq org-startup-truncated nil)
+  :config
+  (org-phscroll-activate))
