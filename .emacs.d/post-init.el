@@ -619,7 +619,7 @@
 (use-package org-roam-timeline)
 (use-package wikinfo)
 (use-package wikinforg
-  :load-path "edited/")
+    :load-path "custom/")
 
 (require 'org-protocol)
 
@@ -723,3 +723,6 @@
   (setq org-startup-truncated nil)
   :config
   (org-phscroll-activate))
+
+(use-package org-grid
+   :load-path "custom/")
