@@ -5,15 +5,10 @@
 #+PROPERTY: header-args :tangle post-init.el
 
 This is my literate emacs file. When tangled, it gives ~post-init.el~ and should be used with James Cherti's [[https://github.com/jamescherti/minimal-emacs.d][minimal-emacs.d]].
-
 * Config
 ** Lexical Binding
 #+begin_src elisp
 ;;; -*- no-byte-compile: t; lexical-binding: t -*-
-#+end_src
-** Use-Package
-#+begin_src elisp  
-(eval-when-compile (require 'use-package))
 #+end_src
 ** Compile-Angel
 Keep compile-angel at the top!
@@ -30,6 +25,10 @@ Keep compile-angel at the top!
   (push "/pre-early-init.el" compile-angel-excluded-files)
   (push "/post-early-init.el" compile-angel-excluded-files)
   (compile-angel-on-load-mode 1))
+#+end_src
+** Use-Package
+#+begin_src elisp  
+(eval-when-compile (require 'use-package))
 #+end_src
 ** Filepaths
 #+begin_src elisp
@@ -113,6 +112,35 @@ Trigger an auto-save after 300 keystrokes
 Trigger an auto-save 30 seconds of idle time.
 #+begin_src 
 (setq auto-save-timeout 30)
+#+end_src
+** undo-fu
+lightweight wrapper around Emacs' built-in undo system, providing more convenient undo/redo functionality.
+#+begin_src elisp
+(use-package undo-fu
+  :commands (undo-fu-only-undo
+             undo-fu-only-redo
+             undo-fu-only-redo-all
+             undo-fu-disable-checkpoint)
+  :config
+  (global-set-key (kbd "C-/") 'undo-fu-only-undo)
+  (global-set-key (kbd "C-S-/") 'undo-fu-only-redo))
+#+end_src
+*** undo-fu-session
+package complements undo-fu by enabling the saving and restoration of undo history across Emacs sessions, even after restarting.
+#+begin_src elisp
+(use-package undo-fu-session
+  :commands undo-fu-session-global-mode
+  :hook (after-init . undo-fu-session-global-mode))
+#+end_src
+** buffer-terminator
+#+begin_src elisp
+(use-package buffer-terminator
+  :custom
+  (buffer-terminator-verbose nil)
+  (buffer-terminator-inactivity-timeout (* 30 60)) ; 30 minutes
+  (buffer-terminator-interval (* 10 60)) ; 10 minutes
+  :config
+  (buffer-terminator-mode 1))
 #+end_src
 ** Corfu
 #+begin_src elisp
@@ -242,37 +270,8 @@ Consult offers a suite of commands for efficient searching, previewing, and inte
   (setq register-preview-delay 0.5
         register-preview-function #'consult-register-format))
 #+end_src
-** undo-fu
-lightweight wrapper around Emacs' built-in undo system, providing more convenient undo/redo functionality.
-#+begin_src elisp
-(use-package undo-fu
-  :commands (undo-fu-only-undo
-             undo-fu-only-redo
-             undo-fu-only-redo-all
-             undo-fu-disable-checkpoint)
-  :config
-  (global-set-key (kbd "C-/") 'undo-fu-only-undo)
-  (global-set-key (kbd "C-S-/") 'undo-fu-only-redo))
-#+end_src
-*** undo-fu-session
-package complements undo-fu by enabling the saving and restoration of undo history across Emacs sessions, even after restarting.
-#+begin_src elisp
-(use-package undo-fu-session
-  :commands undo-fu-session-global-mode
-  :hook (after-init . undo-fu-session-global-mode))
-#+end_src
-** buffer-terminator
-#+begin_src elisp
-(use-package buffer-terminator
-  :custom
-  (buffer-terminator-verbose nil)
-  (buffer-terminator-inactivity-timeout (* 30 60)) ; 30 minutes
-  (buffer-terminator-interval (* 10 60)) ; 10 minutes
-  :config
-  (buffer-terminator-mode 1))
-#+end_src
 ** Treemacs
-A file and project explorer for Emacs that displays a structured tree layout, similar to file browsers in modern IDEs. It functions as a sidebar in the left window, providing a persistent view of files, projects, and other elements.
+A file and project explorer for Emacs that displays a structured tree layout
 #+begin_src elisp
 (use-package treemacs
   :commands (treemacs
@@ -801,25 +800,33 @@ Great little package, don't use now though
     :load-path "custom/")
 #+end_src
 ** My custom functions
+To open this file (my literate-init.org)
+#+begin_src elisp
+(defun my/open-literate-init-file ()
+  "open the literate init file." (interactive)
+  (find-file (expand-file-name "literate-init.org" user-emacs-directory)))
+#+end_src
+To open the tangled ~post-init.el~ file
 #+begin_src elisp
 (defun my/open-init-file ()
   "open the init file." (interactive)
-  (find-file (expand-file-name "post-init.el" user-emacs-directory))) ;; find your init file
-(global-set-key (kbd "C-c o i") #'my/open-init-file)
+  (find-file (expand-file-name "post-init.el" user-emacs-directory))) 
 #+end_src
+Open my org directory (~/org) in dired 
 #+begin_src elisp
 (defun open-org-roam-directory-in-dired ()
   "Open the org-roam-directory in Dired."
   (interactive)
-  (let ((dir (or org-roam-directory default-directory)))
+  (let ((dir "~/org"))
     (dired dir)))
-(global-set-key (kbd "C-c o n") 'open-org-roam-directory-in-dired)
 #+end_src
+To open my todo-masterlist.org file
 #+begin_src elisp
 (defun my/open-todo-master ()
   "Open the master todo file from journal" (interactive)
   (find-file (expand-file-name "todo-masterlist.org" my/journal-dir)))
 #+end_src
+To update the "#+lastmod:" field in org files with the date whenever modified and saved
 #+begin_src elisp
 (defun my/org-update-lastmod ()
   "Update the last modified timestamp in the current buffer."
@@ -836,12 +843,15 @@ Great little package, don't use now though
 #+end_src
 ** Keybindings
 #+begin_src elisp
-(global-set-key (kbd "C-c c") 'org-capture)
-(global-set-key (kbd "C-c j") 'org-journal-new-entry)
-(global-set-key (kbd "C-c o j") 'org-journal-open-current-journal-file)
-(global-set-key (kbd "C-c l") 'org-goto-calendar)
-(global-set-key (kbd "C-z") 'scratch-buffer)
-(global-set-key (kbd "C-c o t") #'my/open-todo-master)
+  (global-set-key (kbd "C-c c") 'org-capture)
+  (global-set-key (kbd "C-c j") 'org-journal-new-entry)
+  (global-set-key (kbd "C-c o j") 'org-journal-open-current-journal-file)
+  (global-set-key (kbd "C-c l") 'org-goto-calendar)
+  (global-set-key (kbd "C-z") 'scratch-buffer)
+  (global-set-key (kbd "C-c o t") #'my/open-todo-master)
+  (global-set-key (kbd "C-c o n") 'open-org-roam-directory-in-dired)
+  (global-set-key (kbd "C-c o i") #'my/open-init-file)
+  (global-set-key (kbd "C-c o l") #'my/open-literate-init-file)
 #+end_src		
 ** Uniline
 #+begin_src elisp
