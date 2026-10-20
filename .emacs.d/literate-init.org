@@ -1,4 +1,4 @@
-#+TITLE: Emacs Literate Configuration
+#+TITLE: astro's literate .emacs.d
 #+PROPERTY: header-args:emacs-lisp :results none :noweb yes
 #+PROPERTY: header-args:emacs-lisp :no-byte-compile t
 #+PROPERTY: header-args:emacs-lisp :lexical-binding t
@@ -412,6 +412,20 @@ can just type 'y' or 'n' instead of a whole word
 (fset 'yes-or-no-p 'y-or-n-p)
 #+end_src
 ** Calendar
+Change colour of diary entry marker in calendar
+#+begin_src elisp
+  (use-package calendar
+  :config
+  (set-face-attribute 'diary nil :foreground "light coral"))
+#+end_src
+automatically mark diary entries in calendar
+#+begin_src elisp
+(setopt calendar-mark-diary-entries-flag t)
+#+end_src
+remove holidays from diary entries
+#+begin_src elisp
+(setopt diary-show-holidays-flag nil)
+#+end_src
 *** calfw
 I sometimes use calfw to display all the events. For most purposes though, the built-in calendar is more than sufficient. 
 #+begin_src elisp
@@ -852,6 +866,7 @@ To update the "#+lastmod:" field in org files with the date whenever modified an
   (global-set-key (kbd "C-c o n") 'open-org-roam-directory-in-dired)
   (global-set-key (kbd "C-c o i") #'my/open-init-file)
   (global-set-key (kbd "C-c o l") #'my/open-literate-init-file)
+  (global-set-key (kbd "C-c s j") 'org-journal-search-forever)
 #+end_src		
 ** Uniline
 #+begin_src elisp

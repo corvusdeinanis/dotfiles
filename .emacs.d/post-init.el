@@ -1,7 +1,5 @@
 ;;; -*- no-byte-compile: t; lexical-binding: t -*-
 
-(eval-when-compile (require 'use-package))
-
 (use-package compile-angel
   :demand t
   :config
@@ -14,6 +12,8 @@
   (push "/pre-early-init.el" compile-angel-excluded-files)
   (push "/post-early-init.el" compile-angel-excluded-files)
   (compile-angel-on-load-mode 1))
+
+(eval-when-compile (require 'use-package))
 
 (defvar my/journal-dir "~/org/journal" "Directory for my journals.")
 (defvar my/roam-dir "~/org" "Directory for my org-roam notes")
@@ -73,6 +73,27 @@
 
 (setq auto-save-interval 300)
 
+(use-package undo-fu
+  :commands (undo-fu-only-undo
+             undo-fu-only-redo
+             undo-fu-only-redo-all
+             undo-fu-disable-checkpoint)
+  :config
+  (global-set-key (kbd "C-/") 'undo-fu-only-undo)
+  (global-set-key (kbd "C-S-/") 'undo-fu-only-redo))
+
+(use-package undo-fu-session
+  :commands undo-fu-session-global-mode
+  :hook (after-init . undo-fu-session-global-mode))
+
+(use-package buffer-terminator
+  :custom
+  (buffer-terminator-verbose nil)
+  (buffer-terminator-inactivity-timeout (* 30 60)) ; 30 minutes
+  (buffer-terminator-interval (* 10 60)) ; 10 minutes
+  :config
+  (buffer-terminator-mode 1))
+
 (use-package corfu
   :commands (corfu-mode global-corfu-mode)
   :hook ((prog-mode . corfu-mode)
@@ -122,10 +143,8 @@
   (("C-." . embark-act)         
    ("C-;" . embark-dwim)        
    ("C-h B" . embark-bindings)) 
-
   :init
   (setq prefix-help-command #'embark-prefix-help-command)
-
   :config
   (add-to-list 'display-buffer-alist
                '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
@@ -183,27 +202,6 @@
   (setq register-preview-delay 0.5
         register-preview-function #'consult-register-format))
 
-(use-package undo-fu
-  :commands (undo-fu-only-undo
-             undo-fu-only-redo
-             undo-fu-only-redo-all
-             undo-fu-disable-checkpoint)
-  :config
-  (global-set-key (kbd "C-/") 'undo-fu-only-undo)
-  (global-set-key (kbd "C-S-/") 'undo-fu-only-redo))
-
-(use-package undo-fu-session
-  :commands undo-fu-session-global-mode
-  :hook (after-init . undo-fu-session-global-mode))
-
-(use-package buffer-terminator
-  :custom
-  (buffer-terminator-verbose nil)
-  (buffer-terminator-inactivity-timeout (* 30 60)) ; 30 minutes
-  (buffer-terminator-interval (* 10 60)) ; 10 minutes
-  :config
-  (buffer-terminator-mode 1))
-
 (use-package treemacs
   :commands (treemacs
              treemacs-select-window
@@ -212,7 +210,6 @@
              treemacs-bookmark
              treemacs-find-file
              treemacs-find-tag)
-
   :bind
   (:map global-map
         ("M-0"       . treemacs-select-window)
@@ -222,11 +219,9 @@
         ("C-x t B"   . treemacs-bookmark)
         ("C-x t C-t" . treemacs-find-file)
         ("C-x t M-t" . treemacs-find-tag))
-
   :init
   (with-eval-after-load 'winum
     (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
-
   :config
   (setq treemacs-collapse-dirs                   (if treemacs-python-executable 3 0)
         treemacs-deferred-git-apply-delay        0.5
@@ -281,18 +276,15 @@
         treemacs-width-increment                 1
         treemacs-width-is-initially-locked       t
         treemacs-workspace-switch-cleanup        nil)
-  
   (treemacs-follow-mode t)
   (treemacs-filewatch-mode t)
   (treemacs-fringe-indicator-mode 'always)
-
   (pcase (cons (not (null (executable-find "git")))
                (not (null treemacs-python-executable)))
     (`(t . t)
      (treemacs-git-mode 'deferred))
     (`(t . _)
      (treemacs-git-mode 'simple)))
-
   (treemacs-hide-gitignored-files-mode nil))
 
 (setq line-number-mode t)
@@ -305,6 +297,7 @@
   :ensure t
   :config
   (load-theme 'doom-laserwave  t))
+
 (use-package doom-modeline
   :init (doom-modeline-mode 1))
 
@@ -328,6 +321,14 @@
 
 (fset 'yes-or-no-p 'y-or-n-p)
 
+(use-package calendar
+:config
+(set-face-attribute 'diary nil :foreground "light coral"))
+
+(setopt calendar-mark-diary-entries-flag t)
+
+(setopt diary-show-holidays-flag nil)
+
 (use-package calfw
   :ensure t
   :demand t)
@@ -335,19 +336,13 @@
   :ensure t
   :demand t)
 
-(use-package csv-mode
-  :commands (csv-mode
-             csv-align-mode
-             csv-guess-set-separator)
-  :mode ("\\.csv\\'" . csv-mode)
-  :hook ((csv-mode . csv-align-mode)
-         (csv-mode . csv-guess-set-separator))
-  :custom
-  (csv-align-max-width 100)
-  (csv-separators '("," ";" " " "|" "\t")))
-
 (add-to-list 'warning-suppress-types '(org-element org-element-parser))
+
 (setq org-hide-emphasis-markers t)
+
+(use-package org-appear
+  :after org
+  :custom (add-hook 'org-mode-hook 'org-appear-mode))
 
 (global-set-key (kbd "C-c a") 'org-agenda)
 
@@ -494,6 +489,8 @@
   :ensure t                             
   :after org-roam)
 
+(use-package org-roam-timeline)
+
 (use-package org-journal
   :ensure t
   :custom
@@ -617,17 +614,19 @@
 (use-package wikinforg
     :load-path "custom/")
 
+(defun my/open-literate-init-file ()
+  "open the literate init file." (interactive)
+  (find-file (expand-file-name "literate-init.org" user-emacs-directory)))
+
 (defun my/open-init-file ()
   "open the init file." (interactive)
-  (find-file (expand-file-name "post-init.el" user-emacs-directory))) ;; find your init file
-(global-set-key (kbd "C-c o i") #'my/open-init-file)
+  (find-file (expand-file-name "post-init.el" user-emacs-directory)))
 
 (defun open-org-roam-directory-in-dired ()
   "Open the org-roam-directory in Dired."
   (interactive)
-  (let ((dir (or org-roam-directory default-directory)))
+  (let ((dir "~/org"))
     (dired dir)))
-(global-set-key (kbd "C-c o n") 'open-org-roam-directory-in-dired)
 
 (defun my/open-todo-master ()
   "Open the master todo file from journal" (interactive)
@@ -652,6 +651,12 @@
 (global-set-key (kbd "C-c l") 'org-goto-calendar)
 (global-set-key (kbd "C-z") 'scratch-buffer)
 (global-set-key (kbd "C-c o t") #'my/open-todo-master)
+(global-set-key (kbd "C-c o n") 'open-org-roam-directory-in-dired)
+(global-set-key (kbd "C-c o i") #'my/open-init-file)
+(global-set-key (kbd "C-c o l") #'my/open-literate-init-file)
+(global-set-key (kbd "C-c s j") 'org-journal-search-forever)
+
+(use-package uniline)
 
 (use-package popper
     :ensure t  
