@@ -329,6 +329,12 @@
 
 (setopt diary-show-holidays-flag nil)
 
+(use-package nano-agenda
+  :ensure t
+  :config
+  (defvar nano-agenda-busy-foregrounds '("red" "orange" "yellow" "green")
+"List of foreground colors used to indicate busy levels in the agenda."))
+
 (use-package calfw
   :ensure t
   :demand t)
@@ -416,6 +422,9 @@
   :ensure t
   :pin melpa  
   :after ox)
+
+(setq org-hugo-base-dir "~/projects/quartz")
+(setq org-hugo-section "")
 
 (use-package org-appear
   :after org

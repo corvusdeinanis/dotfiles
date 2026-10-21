@@ -412,7 +412,7 @@ can just type 'y' or 'n' instead of a whole word
 (fset 'yes-or-no-p 'y-or-n-p)
 #+end_src
 ** Calendar
-Change colour of diary entry marker in calendar
+Change colour of diary entry marker in calendar to light coral (#f08080)
 #+begin_src elisp
   (use-package calendar
   :config
@@ -425,6 +425,15 @@ automatically mark diary entries in calendar
 remove holidays from diary entries
 #+begin_src elisp
 (setopt diary-show-holidays-flag nil)
+#+end_src
+*** Nano Agenda
+For some reason, nano-agenda throws an error  ~"min: Symbol’s value as variable is void: nano-agenda-busy-foregrounds"~. 
+#+begin_src elisp
+  (use-package nano-agenda
+    :ensure t
+    :config
+    (defvar nano-agenda-busy-foregrounds '("red" "orange" "yellow" "green")
+  "List of foreground colors used to indicate busy levels in the agenda."))
 #+end_src
 *** calfw
 I sometimes use calfw to display all the events. For most purposes though, the built-in calendar is more than sufficient. 
@@ -569,6 +578,11 @@ use tectonic because it downloads all modules that are necessary on the fly
   :pin melpa  
   :after ox)
 #+end_src
+Set org-hugo-base-dir and ensure that ox-hugo does not create subfolders in the base-dir:
+#+begin_src elisp
+  (setq org-hugo-base-dir "~/projects/quartz")
+  (setq org-hugo-section "")
+#+end_src
 *** Org Appear
 #+begin_src elisp
 (use-package org-appear
@@ -582,8 +596,8 @@ use tectonic because it downloads all modules that are necessary on the fly
 #+begin_src elisp
 (setq org-structure-template-alist
    '(("a" . "aside") 
-     ("se" . "src elisp :results none") ("sh" . "src html")
-     ("l" . "export latex") ("q" . "quote") ("s" . "src")
+     ("se" . "src elisp") ("sh" . "src html") ("sen" . "src elisp results :none")
+     ("l" . "export latex") ("q" . "quote") ("s" . "src") 
      ("n" . "note") ("pa" . "aside :noexport") ("w" . "warning")))
 #+end_src
 *** Org Modern
@@ -649,7 +663,6 @@ use tectonic because it downloads all modules that are necessary on the fly
   (sqlite-close org-roam--db)
   (find-file (completing-read "Orphan node: " 
              (mapcar (lambda (rec) (string-replace "\"" "" (cadr rec))) org-roam-orphans)))))
-
 #+end_src
 **** Org Roam UI
 #+begin_src elisp
