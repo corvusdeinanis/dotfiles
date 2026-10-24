@@ -30,6 +30,7 @@ alias ,serve="python3 -m http.server"
 alias open="xdg-open"
 alias ,edit-bash="$EDITOR ~/.bashrc"
 alias ,ec="emacsclient -c -a"
+alias ,blogser='make build-clean && ,serve -d dist/'
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -38,10 +39,16 @@ export NVM_DIR="$HOME/.nvm"
 eval "$(mcfly init bash)" #McFly, the shell history thingy
 eval "$(zoxide init bash)"
 
- if [ -z "$SSH_AUTH_SOCK" ] ; then
-    eval `ssh-agent -s`
-    ssh-add ~/.ssh/id_ed25519
- fi
- export EDITOR="emacsclient -t"
- export VISUAL="emacsclient -c -a 'emacs'"
- 
+export EDITOR="emacsclient -t"
+export VISUAL="emacsclient -c -a 'emacs'"
+export PATH=~/.npm-global/bin:$PATH
+
+alarm() {
+    local minutes=${1:-1}
+    local seconds=$((minutes * 60))
+    echo "Alarm set for $minutes minute(s)."
+    sleep "$seconds"
+    paplay /usr/share/sounds/freedesktop/stereo/alarm-clock-elapsed.oga &
+    echo -e "\a"
+    notify-send "Alarm Finished" "$minutes minute(s) have elapsed!"
+}
