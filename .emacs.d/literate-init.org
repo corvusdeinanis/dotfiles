@@ -643,7 +643,7 @@ Set org-hugo-base-dir and ensure that ox-hugo does not create subfolders in the 
                  "${slug}.org"
                  "#+title: ${title}\n#+created: %(format-time-string \"%Y-%m-%d\")\n#+filetags:\n#+lastmod:\n")
         :unnarrowed t)))
-    :bind (("C-c n l" . org-roam-buffer-toggle)
+    :bind (("C-c n b" . org-roam-buffer-toggle)
            ("C-c n f" . org-roam-node-find)
            ("C-c n g" . org-roam-graph)
            ("C-c n i" . org-roam-node-insert)
@@ -880,6 +880,7 @@ To update the "#+lastmod:" field in org files with the date whenever modified an
   (global-set-key (kbd "C-c o i") #'my/open-init-file)
   (global-set-key (kbd "C-c o l") #'my/open-literate-init-file)
   (global-set-key (kbd "C-c s j") 'org-journal-search-forever)
+  (global-set-key (kbd "C-c n l") 'org-web-tools-insert-link-for-url)
 #+end_src		
 ** Uniline
 #+begin_src elisp

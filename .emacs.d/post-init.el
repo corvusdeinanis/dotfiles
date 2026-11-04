@@ -434,8 +434,8 @@
 
 (setq org-structure-template-alist
    '(("a" . "aside") 
-     ("se" . "src elisp :results none") ("sh" . "src html")
-     ("l" . "export latex") ("q" . "quote") ("s" . "src")
+     ("se" . "src elisp") ("sh" . "src html") ("sen" . "src elisp results :none")
+     ("l" . "export latex") ("q" . "quote") ("s" . "src") 
      ("n" . "note") ("pa" . "aside :noexport") ("w" . "warning")))
 
 (use-package org-modern)
@@ -475,7 +475,7 @@
                "${slug}.org"
                "#+title: ${title}\n#+created: %(format-time-string \"%Y-%m-%d\")\n#+filetags:\n#+lastmod:\n")
       :unnarrowed t)))
-  :bind (("C-c n l" . org-roam-buffer-toggle)
+  :bind (("C-c n b" . org-roam-buffer-toggle)
          ("C-c n f" . org-roam-node-find)
          ("C-c n g" . org-roam-graph)
          ("C-c n i" . org-roam-node-insert)
@@ -664,6 +664,7 @@
 (global-set-key (kbd "C-c o i") #'my/open-init-file)
 (global-set-key (kbd "C-c o l") #'my/open-literate-init-file)
 (global-set-key (kbd "C-c s j") 'org-journal-search-forever)
+(global-set-key (kbd "C-c n l") 'org-web-tools-insert-link-for-url)
 
 (use-package uniline)
 
