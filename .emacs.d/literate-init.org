@@ -602,8 +602,22 @@ Set org-hugo-base-dir and ensure that ox-hugo does not create subfolders in the 
 #+end_src
 *** Org Modern
 #+begin_src elisp
-(use-package org-modern)
-(with-eval-after-load 'org (global-org-modern-mode))
+(use-package org-modern
+  :ensure t
+  :config
+  (global-org-modern-mode 1)
+#+end_src
+remove the background colour
+#+begin_src elisp
+(set-face-attribute 'org-modern-tag nil :inherit 'org-modern-label :foreground "white"))
+#+end_src
+*** Rainbow Tags
+#+begin_src elisp
+(use-package org-rainbow-tags
+  :hook
+    (org-mode . org-rainbow-tags-mode)
+  :custom
+  (setq org-rainbow-tags-hash-start-index 10))
 #+end_src
 *** Org Capture
 #+begin_src elisp

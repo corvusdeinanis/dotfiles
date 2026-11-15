@@ -438,8 +438,18 @@
      ("l" . "export latex") ("q" . "quote") ("s" . "src") 
      ("n" . "note") ("pa" . "aside :noexport") ("w" . "warning")))
 
-(use-package org-modern)
-(with-eval-after-load 'org (global-org-modern-mode))
+(use-package org-modern
+  :ensure t
+  :config
+  (global-org-modern-mode 1)
+
+(set-face-attribute 'org-modern-tag nil :inherit 'org-modern-label :foreground "white"))
+
+(use-package org-rainbow-tags
+  :hook
+    (org-mode . org-rainbow-tags-mode)
+  :custom
+  (setq org-rainbow-tags-hash-start-index 10))
 
 (setq org-capture-templates
   '(("c" "college related stuff")
